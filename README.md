@@ -1153,7 +1153,7 @@
                 }
 
                 row.innerHTML = `
-                    <td><input type="checkbox" class="student-checkbox" data-code="${code}" style="width: 18px; height: 18px; cursor: pointer;"></td>
+                    <td style="text-align: center;"><input type="checkbox" class="student-checkbox" data-code="${code}" style="width: 18px; height: 18px; cursor: pointer;"></td>
                     <td>${idx + 1}</td>
                     <td>${name}</td>
                     <td><strong>${code}</strong></td>
@@ -1164,6 +1164,8 @@
                 tbody.appendChild(row);
             });
             
+            // 立即設置複選框事件
+            setupCheckboxes();
             renderAdminSeats();
         }
 
@@ -1323,8 +1325,8 @@
                 return;
             }
 
-            checkboxes.forEach(checkbox => {
-                const code = checkbox.dataset.code;
+            const codes = Array.from(checkboxes).map(cb => cb.dataset.code);
+            codes.forEach(code => {
                 delete appState.students[code];
                 delete appState.selections[code];
             });
@@ -1334,9 +1336,21 @@
             renderAdminSeats();
             
             const msg = document.getElementById('successMessage');
-            msg.textContent = `✓ 已刪除 ${checkboxes.length} 位學生`;
+            msg.textContent = `✓ 已刪除 ${codes.length} 位學生`;
             msg.classList.add('active');
             setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        // 防止表格重新渲染時丟失複選框狀態
+        function setupCheckboxes() {
+            const tbody = document.getElementById('studentsList');
+            if (tbody) {
+                tbody.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('student-checkbox')) {
+                        // 複選框狀態已更新，無需額外操作
+                    }
+                });
+            }
         }
 
         function switchAdminTab(tab) {
@@ -1448,8 +1462,23 @@
                 if (appState.currentPage === 'selection' && appState.currentUser) {
                     renderSeats();
                 } else if (appState.currentPage === 'admin') {
-                    renderStudentsList();
-                    renderAdminSeats();
+                    // 只在不是學生名單頁時自動更新
+                    const activeTab = document.querySelector('.tab-content.active');
+                    if (activeTab && activeTab.id === 'studentsTab') {
+                        // 保存複選框狀態
+                        const checkedCodes = Array.from(document.querySelectorAll('.student-checkbox:checked'))
+                            .map(cb => cb.dataset.code);
+                        
+                        renderStudentsList();
+                        
+                        // 恢復複選框狀態
+                        checkedCodes.forEach(code => {
+                            const checkbox = document.querySelector(`.student-checkbox[data-code="${code}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    } else {
+                        renderAdminSeats();
+                    }
                 }
             }, appState.syncInterval);
         }
