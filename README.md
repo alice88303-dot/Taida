@@ -268,6 +268,7 @@
             border: 2px solid #e5e7eb;
             border-radius: 12px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -276,6 +277,9 @@
             font-size: 16px;
             background: white;
             color: #374151;
+            overflow: hidden;
+            word-break: break-word;
+            padding: 4px;
         }
 
         .seat:hover:not(.occupied) {
@@ -763,10 +767,15 @@
                     </div>
 
                     <h3 style="margin-bottom: 15px;">📝 當前學生清單</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button type="button" class="btn-danger" onclick="deleteAllStudents()" style="padding: 10px 20px; font-size: 14px;">🗑️ 全部清除</button>
+                        <button type="button" class="btn-secondary" onclick="deleteSelectedStudents()" style="padding: 10px 20px; font-size: 14px;">🗑️ 刪除選中學生</button>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table class="students-table">
                             <thead>
                                 <tr>
+                                    <th style="width: 40px;">☑️</th>
                                     <th>序號</th>
                                     <th>姓名</th>
                                     <th>通行碼</th>
@@ -777,7 +786,7 @@
                             </thead>
                             <tbody id="studentsList">
                                 <tr>
-                                    <td colspan="6" style="text-align: center; color: #9ca3af;">尚無學生</td>
+                                    <td colspan="7" style="text-align: center; color: #9ca3af;">尚無學生</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1121,7 +1130,7 @@
             );
 
             if (students.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #9ca3af;">尚無學生</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #9ca3af;">尚無學生</td></tr>';
                 return;
             }
 
@@ -1144,6 +1153,7 @@
                 }
 
                 row.innerHTML = `
+                    <td><input type="checkbox" class="student-checkbox" data-code="${code}" style="width: 18px; height: 18px; cursor: pointer;"></td>
                     <td>${idx + 1}</td>
                     <td>${name}</td>
                     <td><strong>${code}</strong></td>
@@ -1280,6 +1290,51 @@
             
             const msg = document.getElementById('successMessage');
             msg.textContent = `✓ 已清除 ${studentName} 的座位，${studentName} 可重新選位`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function deleteAllStudents() {
+            if (!confirm('⚠️ 確定要刪除全部學生嗎？\n（學生資料無法恢復）')) {
+                return;
+            }
+
+            appState.students = {};
+            appState.selections = {};
+            
+            saveData();
+            renderStudentsList();
+            renderAdminSeats();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 已刪除全部學生`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function deleteSelectedStudents() {
+            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('請先選中要刪除的學生');
+                return;
+            }
+
+            if (!confirm(`⚠️ 確定要刪除選中的 ${checkboxes.length} 位學生嗎？\n（學生資料無法恢復）`)) {
+                return;
+            }
+
+            checkboxes.forEach(checkbox => {
+                const code = checkbox.dataset.code;
+                delete appState.students[code];
+                delete appState.selections[code];
+            });
+            
+            saveData();
+            renderStudentsList();
+            renderAdminSeats();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 已刪除 ${checkboxes.length} 位學生`;
             msg.classList.add('active');
             setTimeout(() => msg.classList.remove('active'), 3000);
         }
