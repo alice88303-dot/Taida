@@ -18,643 +18,106 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* ============ 登入頁面 ============ */
-        .login-page {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .login-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-            padding: 50px;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .login-title h1 {
-            font-size: 32px;
-            color: #1f2937;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .login-title p {
-            color: #9ca3af;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #374151;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 12px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .login-button:hover {
-            background: #1d4ed8;
-        }
-
-        .error-message {
-            color: #ef4444;
-            font-size: 13px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .mode-switch {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .mode-switch button {
-            font-size: 12px;
-            margin: 5px;
-            background: #e5e7eb;
-            color: #374151;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* ============ 選位頁面 ============ */
-        .selection-page {
-            display: none;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            color: #1f2937;
-        }
-
-        .user-info {
-            text-align: right;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .user-info .username {
-            font-weight: 600;
-            color: #1f2937;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        .legend {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f9fafb;
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-
-        .legend-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 8px;
-            border: 2px solid #e5e7eb;
-        }
-
-        .blackboard-title {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 12px;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .blackboard-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .area-section {
-            border-radius: 12px;
-            padding: 25px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .area-section.area-a {
-            border-top: 8px solid #22c55e;
-        }
-
-        .area-section.area-b {
-            border-top: 8px solid #3b82f6;
-        }
-
-        .area-section.area-c {
-            border-top: 8px solid #f59e0b;
-        }
-
-        .area-section.area-d {
-            border-top: 8px solid #ec4899;
-        }
-
-        .area-title {
-            font-size: 22px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .area-a .area-title {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .area-b .area-title {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .area-c .area-title {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .area-d .area-title {
-            background: #fce7f3;
-            color: #9f1239;
-        }
-
-        .seat-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-        }
-
-        .seat {
-            aspect-ratio: 1;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 700;
-            font-size: 16px;
-            background: white;
-            color: #374151;
-            overflow: hidden;
-            word-break: break-word;
-            padding: 4px;
-        }
-
-        .seat:hover:not(.occupied) {
-            background: #f0f9ff;
-            border-color: #3b82f6;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-        }
-
-        .seat.selected {
-            background: #00ff00;
-            border-color: #00cc00;
-            color: black;
-            font-weight: 900;
-            font-size: 20px;
-        }
-
-        .seat.occupied {
-            background: #f3f4f6;
-            border-color: #d1d5db;
-            color: #9ca3af;
-            cursor: not-allowed;
-            font-size: 20px;
-        }
-
-        /* 各區選中座位的顏色 */
-        .area-a .seat.selected {
-            background: #22c55e;
-            border-color: #16a34a;
-            color: white;
-        }
-
-        .area-b .seat.selected {
-            background: #3b82f6;
-            border-color: #1e40af;
-            color: white;
-        }
-
-        .area-c .seat.selected {
-            background: #f59e0b;
-            border-color: #d97706;
-            color: white;
-        }
-
-        .area-d .seat.selected {
-            background: #ec4899;
-            border-color: #be185d;
-            color: white;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons button {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-
-        .btn-secondary {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .btn-secondary:hover {
-            background: #d1d5db;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        /* ============ Modal 對話框 ============ */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 500px;
-            text-align: center;
-            animation: slideUp 0.3s ease-out;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-content h2 {
-            margin-bottom: 15px;
-            color: #1f2937;
-            font-size: 24px;
-        }
-
-        .modal-content p {
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .modal-buttons button {
-            flex: 1;
-            min-width: 120px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .confirm-info {
-            background: #f0fdf4;
-            border: 2px solid #86efac;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .confirm-info div {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #86efac;
-        }
-
-        .confirm-info div:last-child {
-            border-bottom: none;
-        }
-
-        .confirm-info span:first-child {
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        .confirm-info span:last-child {
-            color: #1f2937;
-            font-weight: 700;
-        }
-
-        .warning-box {
-            background: #fef3c7;
-            border: 2px solid #fde047;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            color: #92400e;
-            font-size: 14px;
-        }
-
-        /* ============ 老師後台 ============ */
-        .admin-page {
-            display: none;
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .admin-header h1 {
-            font-size: 28px;
-            color: #1f2937;
-        }
-
-        .admin-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .sync-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e5e7eb;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-weight: 600;
-            color: #9ca3af;
-            transition: all 0.3s;
-        }
-
-        .tab-button.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .upload-section {
-            background: #f0fdf4;
-            border: 2px dashed #86efac;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 13px;
-            resize: vertical;
-            min-height: 150px;
-            margin: 15px 0;
-        }
-
-        .students-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .students-table thead {
-            background: #f9fafb;
-        }
-
-        .students-table th,
-        .students-table td {
-            padding: 12px 16px;
-            text-align: left;
-            font-size: 14px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .students-table th {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .students-table tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        .icon-btn {
-            padding: 8px 12px;
-            font-size: 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .icon-btn:hover {
-            background: #fca5a5;
-        }
-
-        .success-message {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .success-message.active {
-            display: block;
-        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .login-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12); padding: 50px; width: 100%; max-width: 420px; }
+        .login-title h1 { font-size: 32px; color: #1f2937; margin-bottom: 10px; text-align: center; }
+        .login-title p { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #374151; font-weight: 600; font-size: 14px; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; }
+        .form-group input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .login-button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .login-button:hover { background: #1d4ed8; }
+        .error-message { color: #ef4444; font-size: 13px; margin-top: 5px; display: none; }
+        .mode-switch { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .mode-switch button { font-size: 12px; margin: 5px; background: #e5e7eb; color: #374151; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; }
+
+        .selection-page { display: none; }
+        .admin-page { display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .header h1 { font-size: 28px; color: #1f2937; }
+        .user-info { text-align: right; font-size: 14px; color: #6b7280; }
+        .user-info .username { font-weight: 600; color: #1f2937; display: block; margin-bottom: 5px; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); padding: 30px; margin-bottom: 20px; }
+        .legend { display: flex; gap: 20px; margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 8px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .legend-color { width: 24px; height: 24px; border-radius: 8px; border: 2px solid #e5e7eb; }
+        .blackboard-title { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 20px; text-align: center; border-radius: 12px; font-size: 28px; font-weight: 700; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .blackboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
+        .area-section { border-radius: 12px; padding: 25px; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        .area-section.area-a { border-top: 8px solid #22c55e; }
+        .area-section.area-b { border-top: 8px solid #3b82f6; }
+        .area-section.area-c { border-top: 8px solid #f59e0b; }
+        .area-section.area-d { border-top: 8px solid #ec4899; }
+        .area-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 20px; padding: 12px; border-radius: 8px; }
+        .area-a .area-title { background: #dcfce7; color: #166534; }
+        .area-b .area-title { background: #dbeafe; color: #1e40af; }
+        .area-c .area-title { background: #fef3c7; color: #92400e; }
+        .area-d .area-title { background: #fce7f3; color: #9f1239; }
+        .seat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .seat { aspect-ratio: 1; border: 2px solid #e5e7eb; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-weight: 700; font-size: 16px; background: white; color: #374151; overflow: hidden; word-break: break-word; padding: 4px; }
+        .seat:hover:not(.occupied) { background: #f0f9ff; border-color: #3b82f6; transform: scale(1.05); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+        .seat.selected { background: #00ff00; border-color: #00cc00; color: black; font-weight: 900; font-size: 20px; }
+        .seat.occupied { background: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed; font-size: 20px; }
+        .area-a .seat.selected { background: #22c55e; border-color: #16a34a; color: white; }
+        .area-b .seat.selected { background: #3b82f6; border-color: #1e40af; color: white; }
+        .area-c .seat.selected { background: #f59e0b; border-color: #d97706; color: white; }
+        .area-d .seat.selected { background: #ec4899; border-color: #be185d; color: white; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+        .action-buttons button { flex: 1; min-width: 150px; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-secondary:hover { background: #d1d5db; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 40px; border-radius: 16px; max-width: 500px; text-align: center; animation: slideUp 0.3s ease-out; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-content h2 { margin-bottom: 15px; color: #1f2937; font-size: 24px; }
+        .modal-content p { color: #6b7280; margin-bottom: 20px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal-buttons button { flex: 1; min-width: 120px; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .confirm-info { background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: left; }
+        .confirm-info div { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #86efac; }
+        .confirm-info div:last-child { border-bottom: none; }
+        .warning-box { background: #fef3c7; border: 2px solid #fde047; border-radius: 8px; padding: 15px; margin: 15px 0; color: #92400e; font-size: 14px; }
+
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .admin-header h1 { font-size: 28px; color: #1f2937; }
+        .admin-info { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .sync-indicator { display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 6px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; }
+        .tab-button { padding: 12px 20px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; color: #9ca3af; transition: all 0.3s; }
+        .tab-button.active { color: #2563eb; border-bottom-color: #2563eb; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .upload-section { background: #f0fdf4; border: 2px dashed #86efac; border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 20px; }
+        textarea { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 6px; font-family: monospace; font-size: 13px; resize: vertical; min-height: 150px; margin: 15px 0; }
+        .students-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        .students-table thead { background: #f9fafb; }
+        .students-table th, .students-table td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+        .students-table th { font-weight: 600; color: #374151; }
+        .students-table tbody tr:hover { background: #f9fafb; }
+        .icon-btn { padding: 8px 12px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.3s; background: #fee2e2; color: #991b1b; }
+        .icon-btn:hover { background: #fca5a5; }
+        .success-message { background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 6px; margin-bottom: 15px; display: none; }
+        .success-message.active { display: block; }
 
         @media (max-width: 768px) {
-            .blackboard-container {
-                grid-template-columns: 1fr;
-            }
-
-            .seat {
-                font-size: 14px;
-            }
-
-            .modal-content {
-                margin: 20px;
-                max-width: 90vw;
-            }
+            .blackboard-container { grid-template-columns: 1fr; }
+            .seat { font-size: 14px; }
+            .modal-content { margin: 20px; max-width: 90vw; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ============ 登入頁面 ============ -->
+        <!-- 登入頁 -->
         <div id="loginPage" class="login-page">
             <div class="login-card">
                 <div class="login-title">
@@ -679,7 +142,7 @@
             </div>
         </div>
 
-        <!-- ============ 選位頁面 ============ -->
+        <!-- 選位頁 -->
         <div id="selectionPage" class="selection-page">
             <div class="header">
                 <h1>🎓 選位系統</h1>
@@ -712,17 +175,14 @@
                         <div class="area-title">A區</div>
                         <div class="seat-grid" id="areaA"></div>
                     </div>
-
                     <div class="area-section area-b">
                         <div class="area-title">B區</div>
                         <div class="seat-grid" id="areaB"></div>
                     </div>
-
                     <div class="area-section area-c">
                         <div class="area-title">C區</div>
                         <div class="seat-grid" id="areaC"></div>
                     </div>
-
                     <div class="area-section area-d">
                         <div class="area-title">D區</div>
                         <div class="seat-grid" id="areaD"></div>
@@ -735,7 +195,7 @@
             </div>
         </div>
 
-        <!-- ============ 老師後台 ============ -->
+        <!-- 老師後台 -->
         <div id="adminPage" class="admin-page">
             <div class="admin-header">
                 <h1>📊 老師後台</h1>
@@ -794,7 +254,7 @@
                 </div>
             </div>
 
-            <!-- 座位視圖 -->
+            <!-- 選位視圖 -->
             <div id="viewTab" class="tab-content">
                 <div class="card">
                     <h2 style="margin-bottom: 20px;">👁️ 選位視圖（實時監控）</h2>
@@ -804,17 +264,14 @@
                             <div class="area-title">A區</div>
                             <div class="seat-grid" id="adminAreaA"></div>
                         </div>
-
                         <div class="area-section area-b">
                             <div class="area-title">B區</div>
                             <div class="seat-grid" id="adminAreaB"></div>
                         </div>
-
                         <div class="area-section area-c">
                             <div class="area-title">C區</div>
                             <div class="seat-grid" id="adminAreaC"></div>
                         </div>
-
                         <div class="area-section area-d">
                             <div class="area-title">D區</div>
                             <div class="seat-grid" id="adminAreaD"></div>
@@ -879,30 +336,15 @@
             <div style="font-size: 48px; margin-bottom: 10px;">✓</div>
             <h2 style="color: #22c55e;">確認選位</h2>
             <p style="color: #6b7280; margin-top: 5px;">請確認下方資訊是否正確</p>
-            
             <div class="confirm-info">
-                <div>
-                    <span>姓名</span>
-                    <span id="confirmName">-</span>
-                </div>
-                <div>
-                    <span>區域</span>
-                    <span id="confirmArea">-</span>
-                </div>
-                <div>
-                    <span>座位號</span>
-                    <span id="confirmSeat">-</span>
-                </div>
-                <div>
-                    <span>排序</span>
-                    <span id="confirmOrder">-</span>
-                </div>
+                <div><span>姓名</span><span id="confirmName">-</span></div>
+                <div><span>區域</span><span id="confirmArea">-</span></div>
+                <div><span>座位號</span><span id="confirmSeat">-</span></div>
+                <div><span>排序</span><span id="confirmOrder">-</span></div>
             </div>
-            
             <div class="warning-box">
                 <strong>⚠️ 注意：</strong>確認後您將無法自行更改座位。如需修改，請聯繫老師。
             </div>
-            
             <div class="modal-buttons">
                 <button type="button" class="btn-secondary" onclick="closeConfirmDialog()">取消</button>
                 <button type="button" class="btn-primary" onclick="finalizeSelection()">✓ 確認選位</button>
@@ -1120,7 +562,6 @@
             document.getElementById('selectionPage').style.display = 'none';
             document.getElementById('adminPage').style.display = 'block';
             renderStudentsList();
-            renderAdminSeats();
         }
 
         function renderStudentsList() {
@@ -1163,10 +604,6 @@
                 `;
                 tbody.appendChild(row);
             });
-            
-            // 立即設置複選框事件
-            setupCheckboxes();
-            renderAdminSeats();
         }
 
         function renderAdminSeats() {
@@ -1201,12 +638,11 @@
                                 }
                             }
                             
-                            seatDiv.innerHTML = `<div style="line-height: 1;">${seatNum}</div><div style="line-height: 1;">${studentOnSeat.name}</div>`;
-                            seatDiv.style.fontSize = '23px';
+                            // 修改：字體縮小到 14px，讓全名能在同一行
+                            seatDiv.innerHTML = `<div style="line-height: 1; font-size: 12px;">${seatNum}</div><div style="line-height: 1; font-size: 12px;">${studentOnSeat.name}</div>`;
+                            seatDiv.style.fontSize = '12px';
                             seatDiv.style.fontWeight = '700';
                             seatDiv.style.padding = '2px';
-                            seatDiv.style.wordWrap = 'break-word';
-                            seatDiv.style.whiteSpace = 'normal';
                             seatDiv.style.display = 'flex';
                             seatDiv.style.flexDirection = 'column';
                             seatDiv.style.alignItems = 'center';
@@ -1256,7 +692,6 @@
             saveData();
             document.getElementById('nameList').value = '';
             renderStudentsList();
-            renderAdminSeats();
             
             const msg = document.getElementById('successMessage');
             msg.textContent = `✓ 成功添加 ${names.length} 個新學生`;
@@ -1282,7 +717,6 @@
             }
 
             const studentName = appState.students[deleteTargetCode];
-            // 只刪除選位記錄，保留學生資料和通行碼
             delete appState.selections[deleteTargetCode];
             
             saveData();
@@ -1341,24 +775,17 @@
             setTimeout(() => msg.classList.remove('active'), 3000);
         }
 
-        // 防止表格重新渲染時丟失複選框狀態
-        function setupCheckboxes() {
-            const tbody = document.getElementById('studentsList');
-            if (tbody) {
-                tbody.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('student-checkbox')) {
-                        // 複選框狀態已更新，無需額外操作
-                    }
-                });
-            }
-        }
-
         function switchAdminTab(tab) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
             event.target.classList.add('active');
             document.getElementById(tab + 'Tab').classList.add('active');
+            
+            if (tab === 'view') {
+                loadData();
+                renderAdminSeats();
+            }
         }
 
         function exportStudentList() {
@@ -1458,27 +885,20 @@
         function startAutoSync() {
             if (syncTimer) clearInterval(syncTimer);
             syncTimer = setInterval(() => {
+                // 檢查當前是否在學生名單頁
+                const activeTab = document.querySelector('.tab-content.active');
+                
+                // 如果在學生名單頁，跳過同步（保護複選框）
+                if (activeTab && activeTab.id === 'studentsTab') {
+                    return;
+                }
+                
+                // 其他頁面正常同步
                 loadData();
                 if (appState.currentPage === 'selection' && appState.currentUser) {
                     renderSeats();
                 } else if (appState.currentPage === 'admin') {
-                    // 只在不是學生名單頁時自動更新
-                    const activeTab = document.querySelector('.tab-content.active');
-                    if (activeTab && activeTab.id === 'studentsTab') {
-                        // 保存複選框狀態
-                        const checkedCodes = Array.from(document.querySelectorAll('.student-checkbox:checked'))
-                            .map(cb => cb.dataset.code);
-                        
-                        renderStudentsList();
-                        
-                        // 恢復複選框狀態
-                        checkedCodes.forEach(code => {
-                            const checkbox = document.querySelector(`.student-checkbox[data-code="${code}"]`);
-                            if (checkbox) checkbox.checked = true;
-                        });
-                    } else {
-                        renderAdminSeats();
-                    }
+                    renderAdminSeats();
                 }
             }, appState.syncInterval);
         }
