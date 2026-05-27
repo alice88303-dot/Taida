@@ -619,7 +619,7 @@
         <div id="loginPage" class="login-page">
             <div class="login-card">
                 <div class="login-title">
-                    <h1>🎓 台大補習班</h1><h2 style="font-size:24px;color:#2563eb;margin-bottom:5px;text-align:center">選位系統</h2>
+                    <h1>🎓 選位</h1>
                     <p>請輸入姓名和通行碼開始選位</p>
                 </div>
                 <form onsubmit="handleLogin(event)">
@@ -789,7 +789,6 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
                         <button type="button" class="btn-primary" onclick="exportStudentList()" style="padding: 15px;">📥 匯出學生名單</button>
                         <button type="button" class="btn-primary" onclick="exportResults()" style="padding: 15px;">📥 匯出選位結果</button>
-                        <button type="button" class="btn-primary" onclick="exportSeatsAsImage()" style="padding: 15px;">📥 座位圖片</button>
                         <button type="button" class="btn-primary" onclick="exportJSON()" style="padding: 15px;">📥 完整備份</button>
                         <button type="button" class="btn-primary" onclick="printResults()" style="padding: 15px;">🖨️ 列印座位表</button>
                     </div>
@@ -1243,98 +1242,6 @@
             
             downloadFile(JSON.stringify(data, null, 2), `seat_data_${Date.now()}.json`, 'application/json;charset=utf-8');
             alert('✓ 完整備份已下載');
-        }
-
-        function exportSeatsAsImage() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1600;
-            canvas.height = 900;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 28px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('智能選位系統 - 座位分布圖', canvas.width / 2, 40);
-            
-            ctx.font = '16px Arial';
-            ctx.fillStyle = '#6b7280';
-            ctx.fillText('生成時間：' + new Date().toLocaleString('zh-TW'), canvas.width / 2, 65);
-            
-            const areas = [
-                { name: 'A', x: 50, y: 100, color: '#dcfce7' },
-                { name: 'B', x: 850, y: 100, color: '#dbeafe' },
-                { name: 'C', x: 50, y: 500, color: '#fef3c7' },
-                { name: 'D', x: 850, y: 500, color: '#fce7f3' }
-            ];
-            
-            const seatSize = 35;
-            const gapSize = 4;
-            
-            areas.forEach(area => {
-                ctx.fillStyle = area.color;
-                ctx.fillRect(area.x, area.y, 380, 340);
-                
-                ctx.fillStyle = area.name === 'A' ? '#166534' : area.name === 'B' ? '#1e40af' : area.name === 'C' ? '#92400e' : '#9f1239';
-                ctx.font = 'bold 18px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillText(area.name + '區', area.x + 10, area.y + 28);
-                
-                let seatNum = 1;
-                for (let row = 0; row < 6; row++) {
-                    for (let col = 0; col < 5; col++) {
-                        const x = area.x + 20 + col * (seatSize + gapSize);
-                        const y = area.y + 45 + row * (seatSize + gapSize);
-                        const seatId = `${area.name}-${String(seatNum).padStart(2, '0')}`;
-                        const selection = Object.values(appState.selections).find(s => s.seat === seatId);
-                        const areaColor = area.name === 'A' ? '#22c55e' : area.name === 'B' ? '#3b82f6' : area.name === 'C' ? '#f59e0b' : '#ec4899';
-                        
-                        if (selection) {
-                            ctx.fillStyle = areaColor;
-                            ctx.strokeStyle = '#000';
-                            ctx.lineWidth = 2;
-                        } else {
-                            ctx.fillStyle = '#e5e7eb';
-                            ctx.strokeStyle = '#9ca3af';
-                            ctx.lineWidth = 1;
-                        }
-                        
-                        ctx.fillRect(x, y, seatSize, seatSize);
-                        ctx.strokeRect(x, y, seatSize, seatSize);
-                        
-                        ctx.fillStyle = selection ? '#ffffff' : '#374151';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        
-                        if (selection) {
-                            const nameText = selection.name.length > 2 ? selection.name.substring(0, 2) : selection.name;
-                            ctx.fillText(nameText, x + seatSize / 2, y + seatSize / 2);
-                        } else {
-                            ctx.fillText(seatNum.toString(), x + seatSize / 2, y + seatSize / 2);
-                        }
-                        seatNum++;
-                    }
-                }
-            });
-            
-            ctx.fillStyle = '#333333';
-            ctx.font = 'bold 16px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('黑板', canvas.width / 2, 850);
-            ctx.strokeStyle = '#333333';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(canvas.width / 2 - 100, 800, 200, 40);
-            
-            const downloadLink = document.createElement('a');
-            downloadLink.href = canvas.toDataURL('image/png');
-            downloadLink.download = `TaiDa_seating_chart_${Date.now()}.png`;
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-            alert('✓ 座位圖片已下載');
         }
 
         function printResults() {
