@@ -125,7 +125,7 @@
                     <h2 style="font-size: 24px; color: #2563eb; margin-bottom: 5px; text-align: center;">選位系統</h2>
                     <p>請輸入姓名和通行碼開始選位</p>
                 </div>
-                <form onsubmit="handleLogin(event)">
+                <form onsubmit="handleLogin(event); return false;">
                     <div class="form-group">
                         <label for="studentName">姓名</label>
                         <input type="text" id="studentName" placeholder="輸入你的名字" required>
@@ -135,7 +135,7 @@
                         <input type="text" id="passCode" placeholder="輸入通行碼" required>
                         <div class="error-message" id="errorMessage"></div>
                     </div>
-                    <button type="submit" class="login-button">開始選位</button>
+                    <button type="button" onclick="handleLogin(event)" class="login-button" style="width: 100%; padding: 14px; font-size: 18px; min-height: 50px; -webkit-appearance: none; appearance: none;">開始選位</button>
                 </form>
                 <div class="mode-switch">
                     <button type="button" onclick="switchToAdmin()">老師後台</button>
