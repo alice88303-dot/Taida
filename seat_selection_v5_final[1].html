@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能選位系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+        .login-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12); padding: 50px; width: 100%; max-width: 420px; }
+        .login-title h1 { font-size: 32px; color: #1f2937; margin-bottom: 10px; text-align: center; }
+        .login-title p { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #374151; font-weight: 600; font-size: 14px; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; }
+        .form-group input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .login-button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .login-button:hover { background: #1d4ed8; }
+        .error-message { color: #ef4444; font-size: 13px; margin-top: 5px; display: none; }
+        .mode-switch { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .mode-switch button { font-size: 12px; margin: 5px; background: #e5e7eb; color: #374151; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; }
+
+        .selection-page { display: none; }
+        .admin-page { display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .header h1 { font-size: 28px; color: #1f2937; }
+        .user-info { text-align: right; font-size: 14px; color: #6b7280; }
+        .user-info .username { font-weight: 600; color: #1f2937; display: block; margin-bottom: 5px; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); padding: 30px; margin-bottom: 20px; }
+        .legend { display: flex; gap: 20px; margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 8px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .legend-color { width: 24px; height: 24px; border-radius: 8px; border: 2px solid #e5e7eb; }
+        .blackboard-title { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 20px; text-align: center; border-radius: 12px; font-size: 28px; font-weight: 700; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .blackboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
+        .area-section { border-radius: 12px; padding: 25px; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        .area-section.area-a { border-top: 8px solid #22c55e; }
+        .area-section.area-b { border-top: 8px solid #3b82f6; }
+        .area-section.area-c { border-top: 8px solid #f59e0b; }
+        .area-section.area-d { border-top: 8px solid #ec4899; }
+        .area-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 20px; padding: 12px; border-radius: 8px; }
+        .area-a .area-title { background: #dcfce7; color: #166534; }
+        .area-b .area-title { background: #dbeafe; color: #1e40af; }
+        .area-c .area-title { background: #fef3c7; color: #92400e; }
+        .area-d .area-title { background: #fce7f3; color: #9f1239; }
+        .seat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .seat { aspect-ratio: 1; border: 2px solid #e5e7eb; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-weight: 700; font-size: 16px; background: white; color: #374151; overflow: hidden; word-break: break-word; padding: 4px; }
+        .seat:hover:not(.occupied) { background: #f0f9ff; border-color: #3b82f6; transform: scale(1.05); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+        .seat.selected { background: #00ff00; border-color: #00cc00; color: black; font-weight: 900; font-size: 20px; }
+        .seat.occupied { background: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed; font-size: 20px; }
+        .area-a .seat.selected { background: #22c55e; border-color: #16a34a; color: white; }
+        .area-b .seat.selected { background: #3b82f6; border-color: #1e40af; color: white; }
+        .area-c .seat.selected { background: #f59e0b; border-color: #d97706; color: white; }
+        .area-d .seat.selected { background: #ec4899; border-color: #be185d; color: white; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+        .action-buttons button { flex: 1; min-width: 150px; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-secondary:hover { background: #d1d5db; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 40px; border-radius: 16px; max-width: 500px; text-align: center; animation: slideUp 0.3s ease-out; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-content h2 { margin-bottom: 15px; color: #1f2937; font-size: 24px; }
+        .modal-content p { color: #6b7280; margin-bottom: 20px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal-buttons button { flex: 1; min-width: 120px; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .confirm-info { background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: left; }
+        .confirm-info div { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #86efac; }
+        .confirm-info div:last-child { border-bottom: none; }
+        .warning-box { background: #fef3c7; border: 2px solid #fde047; border-radius: 8px; padding: 15px; margin: 15px 0; color: #92400e; font-size: 14px; }
+
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .admin-header h1 { font-size: 28px; color: #1f2937; }
+        .admin-info { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .sync-indicator { display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 6px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; }
+        .tab-button { padding: 12px 20px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; color: #9ca3af; transition: all 0.3s; }
+        .tab-button.active { color: #2563eb; border-bottom-color: #2563eb; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .upload-section { background: #f0fdf4; border: 2px dashed #86efac; border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 20px; }
+        textarea { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 6px; font-family: monospace; font-size: 13px; resize: vertical; min-height: 150px; margin: 15px 0; }
+        .students-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        .students-table thead { background: #f9fafb; }
+        .students-table th, .students-table td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+        .students-table th { font-weight: 600; color: #374151; }
+        .students-table tbody tr:hover { background: #f9fafb; }
+        .icon-btn { padding: 8px 12px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.3s; background: #fee2e2; color: #991b1b; }
+        .icon-btn:hover { background: #fca5a5; }
+        .success-message { background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 6px; margin-bottom: 15px; display: none; }
+        .success-message.active { display: block; }
+
+        @media (max-width: 768px) {
+            .blackboard-container { 
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            .area-section { 
+                padding: 15px; 
+            }
+            .area-title { 
+                font-size: 18px; 
+                margin-bottom: 12px;
+                padding: 8px;
+            }
+            .seat { 
+                font-size: 12px;
+                min-height: 45px;
+                padding: 2px;
+            }
+            .seat-grid { 
+                gap: 8px; 
+            }
+            .modal-content { 
+                margin: 20px; 
+                max-width: 90vw; 
+            }
+            .blackboard-title {
+                font-size: 20px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            .legend {
+                gap: 10px;
+                padding: 10px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登入頁 -->
+        <div id="loginPage" class="login-page">
+            <div class="login-card">
+                <div class="login-title">
+                    <h1>🎓 台大補習班</h1>
+                    <h2 style="font-size: 24px; color: #2563eb; margin-bottom: 5px; text-align: center;">選位系統</h2>
+                    <p>請輸入姓名和通行碼開始選位</p>
+                </div>
+                <form onsubmit="handleLogin(event); return false;">
+                    <div class="form-group">
+                        <label for="studentName">姓名</label>
+                        <input type="text" id="studentName" placeholder="輸入你的名字" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passCode">通行碼</label>
+                        <input type="text" id="passCode" placeholder="輸入通行碼" required>
+                        <div class="error-message" id="errorMessage"></div>
+                    </div>
+                    <button type="button" onclick="handleLogin(event)" class="login-button" style="width: 100%; padding: 14px; font-size: 18px; min-height: 50px; -webkit-appearance: none; appearance: none;">開始選位</button>
+                </form>
+                <div class="mode-switch">
+                    <button type="button" onclick="switchToAdmin()">老師後台</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 選位頁 -->
+        <div id="selectionPage" class="selection-page">
+            <div class="header">
+                <h1>🎓 選位系統</h1>
+                <div class="user-info">
+                    <span class="username" id="displayName"></span>
+                    <small id="seatStatus"></small>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: white;"></div>
+                        <span>可選擇</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #22c55e;"></div>
+                        <span>你的座位</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f3f4f6;"></div>
+                        <span>已被選擇</span>
+                    </div>
+                </div>
+
+                <div class="blackboard-title">🎓 黑板</div>
+
+                <div class="blackboard-container">
+                    <div class="area-section area-a">
+                        <div class="area-title">A區</div>
+                        <div class="seat-grid" id="areaA"></div>
+                    </div>
+                    <div class="area-section area-b">
+                        <div class="area-title">B區</div>
+                        <div class="seat-grid" id="areaB"></div>
+                    </div>
+                    <div class="area-section area-c">
+                        <div class="area-title">C區</div>
+                        <div class="seat-grid" id="areaC"></div>
+                    </div>
+                    <div class="area-section area-d">
+                        <div class="area-title">D區</div>
+                        <div class="seat-grid" id="areaD"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn-secondary" onclick="logout()">登出</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 老師後台 -->
+        <div id="adminPage" class="admin-page">
+            <div class="admin-header">
+                <h1>📊 老師後台</h1>
+                <div class="admin-info">
+                    <span class="sync-indicator"></span>
+                    <span style="color: #6b7280; font-size: 14px;">實時同步中</span>
+                    <button type="button" class="btn-secondary" onclick="logout()" style="margin-left: auto;">登出</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchAdminTab('students')">👥 學生名單</button>
+                <button class="tab-button" onclick="switchAdminTab('view')">👁️ 選位視圖</button>
+                <button class="tab-button" onclick="switchAdminTab('export')">💾 資料匯出</button>
+                <button class="tab-button" onclick="switchAdminTab('settings')">⚙️ 設定</button>
+            </div>
+
+            <!-- 學生名單 -->
+            <div id="studentsTab" class="tab-content active">
+                <div class="card">
+                    <div class="success-message" id="successMessage"></div>
+                    <h2 style="margin-bottom: 20px;">📋 學生名單管理</h2>
+                    
+                    <div class="upload-section">
+                        <h3 style="color: #166534; margin-bottom: 15px;">📝 添加學生名單</h3>
+                        <p style="color: #6b7280; margin-bottom: 15px;">貼入新學生名單（每行一個）</p>
+                        <textarea id="nameList" placeholder="新學生名字&#10;另一個新學生&#10;..."></textarea>
+                        <button type="button" class="btn-primary" onclick="importStudents()">✅ 添加新學生</button>
+                    </div>
+
+                    <h3 style="margin-bottom: 15px;">📝 當前學生清單</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button type="button" class="btn-danger" onclick="deleteAllStudents()" style="padding: 10px 20px; font-size: 14px;">🗑️ 全部清除</button>
+                        <button type="button" class="btn-secondary" onclick="deleteSelectedStudents()" style="padding: 10px 20px; font-size: 14px;">🗑️ 刪除選中學生</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="students-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">☑️</th>
+                                    <th>序號</th>
+                                    <th>姓名</th>
+                                    <th>通行碼</th>
+                                    <th>座位</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsList">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: #9ca3af;">尚無學生</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 選位視圖 -->
+            <div id="viewTab" class="tab-content">
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;">👁️ 選位視圖（實時監控）</h2>
+                    
+                    <div class="blackboard-container" style="margin-bottom: 30px;">
+                        <div class="area-section area-a">
+                            <div class="area-title">A區</div>
+                            <div class="seat-grid" id="adminAreaA"></div>
+                        </div>
+                        <div class="area-section area-b">
+                            <div class="area-title">B區</div>
+                            <div class="seat-grid" id="adminAreaB"></div>
+                        </div>
+                        <div class="area-section area-c">
+                            <div class="area-title">C區</div>
+                            <div class="seat-grid" id="adminAreaC"></div>
+                        </div>
+                        <div class="area-section area-d">
+                            <div class="area-title">D區</div>
+                            <div class="seat-grid" id="adminAreaD"></div>
+                        </div>
+                    </div>
+
+                    <div class="legend" style="margin-top: 20px;">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: white;"></div>
+                            <span>未選擇</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3b82f6;"></div>
+                            <span>已選擇</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 資料匯出 -->
+            <div id="exportTab" class="tab-content">
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;">💾 資料匯出</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button type="button" class="btn-primary" onclick="exportStudentList()" style="padding: 15px;">📥 匯出學生名單</button>
+                        <button type="button" class="btn-primary" onclick="exportResults()" style="padding: 15px;">📥 匯出選位結果</button>
+                        <button type="button" class="btn-primary" onclick="exportJSON()" style="padding: 15px;">📥 完整備份</button>
+                        <button type="button" class="btn-primary" onclick="exportSeatingChart()" style="padding: 15px;">📸 匯出座位圖（投影用）</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 設定 -->
+            <div id="settingsTab" class="tab-content">
+                <div class="card">
+                    <h2 style="margin-bottom: 30px;">⚙️ 系統設定</h2>
+                    <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px;">
+                        <h3 style="color: #166534; margin-bottom: 15px;">🔐 修改老師密碼</h3>
+                        <div style="display: grid; gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">目前密碼</label>
+                                <input type="password" id="currentPassword" placeholder="輸入目前的密碼" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">新密碼</label>
+                                <input type="password" id="newPassword" placeholder="輸入新密碼（至少 4 個字符）" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">確認新密碼</label>
+                                <input type="password" id="confirmPassword" placeholder="再輸入一次新密碼" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            </div>
+                            <button type="button" class="btn-primary" onclick="changePassword()" style="margin-top: 10px;">✅ 修改密碼</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 確認選位 Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 48px; margin-bottom: 10px;">✓</div>
+            <h2 style="color: #22c55e;">確認選位</h2>
+            <p style="color: #6b7280; margin-top: 5px;">請確認下方資訊是否正確</p>
+            <div class="confirm-info">
+                <div><span>姓名</span><span id="confirmName">-</span></div>
+                <div><span>區域</span><span id="confirmArea">-</span></div>
+                <div><span>座位號</span><span id="confirmSeat">-</span></div>
+                <div><span>排序</span><span id="confirmOrder">-</span></div>
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ 注意：</strong>確認後您將無法自行更改座位。如需修改，請聯繫老師。
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeConfirmDialog()">取消</button>
+                <button type="button" class="btn-primary" onclick="finalizeSelection()">✓ 確認選位</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 刪除確認 Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ 確認清除座位</h2>
+            <p id="deleteMessage"></p>
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">取消</button>
+                <button type="button" class="btn-danger" onclick="confirmDelete()">確認清除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const appState = {
+            currentPage: 'login',
+            currentUser: null,
+            selectedSeat: null,
+            students: {},
+            selections: {},
+            adminPassword: '631015',
+            syncInterval: 2000
+        };
+
+        let deleteTargetCode = null;
+
+        function loadData() {
+            const saved = localStorage.getItem('seatSelectionData');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    appState.students = loaded.students || {};
+                    appState.selections = loaded.selections || {};
+                    appState.adminPassword = loaded.adminPassword || '631015';
+                } catch(e) {
+                    console.error('載入資料失敗:', e);
+                }
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('seatSelectionData', JSON.stringify({
+                students: appState.students,
+                selections: appState.selections,
+                adminPassword: appState.adminPassword
+            }));
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const code = document.getElementById('passCode').value.trim();
+            const errorMsg = document.getElementById('errorMessage');
+
+            if (!appState.students[code] || appState.students[code] !== name) {
+                errorMsg.textContent = '姓名或通行碼錯誤';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            appState.currentUser = { name, code };
+            appState.currentPage = 'selection';
+            renderSelectionPage();
+            startAutoSync();
+        }
+
+        function switchToAdmin() {
+            const password = prompt('🔐 請輸入老師密碼：');
+            if (password === null) return;
+            
+            if (password !== appState.adminPassword) {
+                alert('❌ 密碼錯誤');
+                return;
+            }
+            
+            appState.currentPage = 'admin';
+            renderAdminPage();
+            startAutoSync();
+        }
+
+        function logout() {
+            appState.currentUser = null;
+            appState.selectedSeat = null;
+            appState.currentPage = 'login';
+            document.getElementById('studentName').value = '';
+            document.getElementById('passCode').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            renderLoginPage();
+        }
+
+        function renderLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('selectionPage').style.display = 'none';
+            document.getElementById('adminPage').style.display = 'none';
+        }
+
+        function renderSelectionPage() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('selectionPage').style.display = 'block';
+            document.getElementById('adminPage').style.display = 'none';
+
+            const user = appState.currentUser;
+            document.getElementById('displayName').textContent = `👋 ${user.name}`;
+
+            if (appState.selections[user.code]) {
+                const selected = appState.selections[user.code];
+                appState.selectedSeat = selected.seat;
+                
+                if (selected.locked) {
+                    document.getElementById('seatStatus').innerHTML = `<span style="color: #ef4444;">🔒 已鎖定：${selected.seat}（無法更改）</span>`;
+                } else {
+                    document.getElementById('seatStatus').textContent = `已選擇：${selected.seat}`;
+                }
+            } else {
+                document.getElementById('seatStatus').textContent = '尚未選擇座位';
+            }
+
+            renderSeats();
+        }
+
+        function renderSeats() {
+            const areas = [
+                { id: 'areaA', name: 'A' },
+                { id: 'areaB', name: 'B' },
+                { id: 'areaC', name: 'C' },
+                { id: 'areaD', name: 'D' }
+            ];
+
+            areas.forEach(area => {
+                const container = document.getElementById(area.id);
+                container.innerHTML = '';
+
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 5; j++) {
+                        const seatNum = i * 5 + j + 1;
+                        const seatId = `${area.name}-${String(seatNum).padStart(2, '0')}`;
+                        
+                        const seatDiv = document.createElement('div');
+                        seatDiv.className = 'seat';
+                        seatDiv.textContent = seatNum;
+
+                        const isMySelectedSeat = appState.selectedSeat === seatId;
+                        const isOccupied = Object.values(appState.selections).some(s => 
+                            s.seat === seatId && s.name !== appState.currentUser.name
+                        );
+                        
+                        const myLockedSeat = appState.selections[appState.currentUser.code]?.seat === seatId && 
+                                            appState.selections[appState.currentUser.code]?.locked;
+
+                        if (isMySelectedSeat || myLockedSeat) {
+                            seatDiv.classList.add('selected');
+                            seatDiv.textContent = '我';
+                        } else if (isOccupied) {
+                            seatDiv.classList.add('occupied');
+                            seatDiv.textContent = '✓';
+                        } else {
+                            seatDiv.onclick = () => selectSeat(seatId);
+                        }
+
+                        container.appendChild(seatDiv);
+                    }
+                }
+            });
+        }
+
+        function selectSeat(seatId) {
+            const user = appState.currentUser;
+            
+            if (appState.selections[user.code] && appState.selections[user.code].locked) {
+                alert('❌ 您的選位已確認鎖定，無法自行更改。\n\n如需修改，請聯繫老師。');
+                return;
+            }
+            
+            appState.selectedSeat = seatId;
+            showConfirmDialog(user.name, seatId);
+        }
+
+        function showConfirmDialog(name, seatId) {
+            document.getElementById('confirmName').textContent = name;
+            document.getElementById('confirmArea').textContent = seatId.split('-')[0] + '區';
+            document.getElementById('confirmSeat').textContent = seatId;
+            document.getElementById('confirmOrder').textContent = '第 ' + (Object.keys(appState.selections).length + 1) + ' 位';
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeConfirmDialog() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        function finalizeSelection() {
+            const user = appState.currentUser;
+            appState.selections[user.code] = {
+                name: user.name,
+                seat: appState.selectedSeat,
+                locked: true,
+                lockedTime: new Date().toLocaleString('zh-TW')
+            };
+
+            saveData();
+            renderSeats();
+            closeConfirmDialog();
+            
+            document.getElementById('seatStatus').innerHTML = `<span style="color: #ef4444;">🔒 已鎖定：${appState.selectedSeat}（無法更改）</span>`;
+            alert('✅ 選位已確認！您現在無法自行更改座位。\n\n如需修改，請聯繫老師。');
+        }
+
+        function renderAdminPage() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('selectionPage').style.display = 'none';
+            document.getElementById('adminPage').style.display = 'block';
+            renderStudentsList();
+        }
+
+        function renderStudentsList() {
+            const tbody = document.getElementById('studentsList');
+            const students = Object.entries(appState.students).sort((a, b) => 
+                a[0].localeCompare(b[0], undefined, { numeric: true })
+            );
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #9ca3af;">尚無學生</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            students.forEach(([code, name], idx) => {
+                const selection = appState.selections[code];
+                const row = document.createElement('tr');
+
+                let statusText = '待選';
+                let statusColor = '#f59e0b';
+
+                if (selection) {
+                    if (selection.locked) {
+                        statusText = `✓ 已鎖定 (${selection.seat})`;
+                        statusColor = '#ef4444';
+                    } else {
+                        statusText = `✓ 已選 (${selection.seat})`;
+                        statusColor = '#22c55e';
+                    }
+                }
+
+                row.innerHTML = `
+                    <td style="text-align: center;"><input type="checkbox" class="student-checkbox" data-code="${code}" style="width: 18px; height: 18px; cursor: pointer;"></td>
+                    <td>${idx + 1}</td>
+                    <td>${name}</td>
+                    <td><strong>${code}</strong></td>
+                    <td>${selection ? selection.seat : '-'}</td>
+                    <td><span style="background-color: ${statusColor}20; color: ${statusColor}; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${statusText}</span></td>
+                    <td><button type="button" class="icon-btn" onclick="showDeleteConfirm('${code}', '${name}')">🗑️ 清除</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderAdminSeats() {
+            const areas = [
+                { id: 'adminAreaA', name: 'A' },
+                { id: 'adminAreaB', name: 'B' },
+                { id: 'adminAreaC', name: 'C' },
+                { id: 'adminAreaD', name: 'D' }
+            ];
+
+            areas.forEach(area => {
+                const container = document.getElementById(area.id);
+                container.innerHTML = '';
+
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 5; j++) {
+                        const seatNum = i * 5 + j + 1;
+                        const seatId = `${area.name}-${String(seatNum).padStart(2, '0')}`;
+                        
+                        const seatDiv = document.createElement('div');
+                        seatDiv.className = 'seat';
+                        
+                        const studentOnSeat = Object.values(appState.selections).find(s => s.seat === seatId);
+                        
+                        if (studentOnSeat) {
+                            seatDiv.classList.add('selected');
+                            let studentCode = null;
+                            for (const [code, name] of Object.entries(appState.students)) {
+                                if (name === studentOnSeat.name) {
+                                    studentCode = code;
+                                    break;
+                                }
+                            }
+                            
+                            // 修改：字體縮小到 14px，讓全名能在同一行
+                            seatDiv.innerHTML = `<div style="line-height: 1; font-size: 12px;">${seatNum}</div><div style="line-height: 1; font-size: 12px;">${studentOnSeat.name}</div>`;
+                            seatDiv.style.fontSize = '12px';
+                            seatDiv.style.fontWeight = '700';
+                            seatDiv.style.padding = '2px';
+                            seatDiv.style.display = 'flex';
+                            seatDiv.style.flexDirection = 'column';
+                            seatDiv.style.alignItems = 'center';
+                            seatDiv.style.justifyContent = 'center';
+                            seatDiv.style.textAlign = 'center';
+                            seatDiv.style.lineHeight = '1.1';
+                            seatDiv.style.cursor = 'pointer';
+                            
+                            seatDiv.onclick = () => {
+                                if (studentCode) {
+                                    showDeleteConfirm(studentCode, studentOnSeat.name);
+                                }
+                            };
+                        } else {
+                            seatDiv.textContent = seatNum;
+                        }
+
+                        container.appendChild(seatDiv);
+                    }
+                }
+            });
+        }
+
+        function importStudents() {
+            const nameList = document.getElementById('nameList').value;
+            if (!nameList.trim()) {
+                alert('請輸入至少一個學生名字');
+                return;
+            }
+
+            const names = nameList.split('\n').map(n => n.trim()).filter(n => n);
+            let maxIndex = 0;
+            Object.keys(appState.students).forEach(code => {
+                const match = code.match(/STU(\d+)/);
+                if (match) {
+                    const num = parseInt(match[1]);
+                    if (num > maxIndex) maxIndex = num;
+                }
+            });
+
+            names.forEach((name, index) => {
+                const newIndex = maxIndex + index + 1;
+                const code = `STU${String(newIndex).padStart(3, '0')}`;
+                appState.students[code] = name;
+            });
+
+            saveData();
+            document.getElementById('nameList').value = '';
+            renderStudentsList();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 成功添加 ${names.length} 個新學生`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function showDeleteConfirm(code, name) {
+            deleteTargetCode = code;
+            document.getElementById('deleteMessage').textContent = `確定要清除 ${name} 的座位嗎？\n（${name} 的通行碼保留，可重新選位）`;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteTargetCode = null;
+        }
+
+        function confirmDelete() {
+            if (!deleteTargetCode) {
+                closeDeleteModal();
+                return;
+            }
+
+            const studentName = appState.students[deleteTargetCode];
+            delete appState.selections[deleteTargetCode];
+            
+            saveData();
+            closeDeleteModal();
+            renderStudentsList();
+            renderAdminSeats();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 已清除 ${studentName} 的座位，${studentName} 可重新選位`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function deleteAllStudents() {
+            if (!confirm('⚠️ 確定要刪除全部學生嗎？\n（學生資料無法恢復）')) {
+                return;
+            }
+
+            appState.students = {};
+            appState.selections = {};
+            
+            saveData();
+            renderStudentsList();
+            renderAdminSeats();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 已刪除全部學生`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function deleteSelectedStudents() {
+            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('請先選中要刪除的學生');
+                return;
+            }
+
+            if (!confirm(`⚠️ 確定要刪除選中的 ${checkboxes.length} 位學生嗎？\n（學生資料無法恢復）`)) {
+                return;
+            }
+
+            const codes = Array.from(checkboxes).map(cb => cb.dataset.code);
+            codes.forEach(code => {
+                delete appState.students[code];
+                delete appState.selections[code];
+            });
+            
+            saveData();
+            renderStudentsList();
+            renderAdminSeats();
+            
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ 已刪除 ${codes.length} 位學生`;
+            msg.classList.add('active');
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+            
+            if (tab === 'view') {
+                loadData();
+                renderAdminSeats();
+            }
+        }
+
+        function exportStudentList() {
+            const students = Object.entries(appState.students).sort((a, b) => 
+                a[0].localeCompare(b[0], undefined, { numeric: true })
+            );
+
+            let csv = '\ufeff序號,姓名,通行碼\n';
+            students.forEach(([code, name], idx) => {
+                csv += `${idx + 1},"${name}","${code}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `student_list_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportResults() {
+            const students = Object.entries(appState.students).sort((a, b) => 
+                a[0].localeCompare(b[0], undefined, { numeric: true })
+            );
+
+            let csv = '\ufeff序號,姓名,通行碼,座位,狀態\n';
+            students.forEach(([code, name], idx) => {
+                const selection = appState.selections[code];
+                const seat = selection ? selection.seat : '-';
+                const status = selection ? '已選' : '待選';
+                csv += `${idx + 1},"${name}","${code}","${seat}","${status}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `seat_results_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportJSON() {
+            const data = {
+                exportTime: new Date().toLocaleString('zh-TW'),
+                students: appState.students,
+                selections: appState.selections
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `seat_data_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportSeatingChart() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 2000;
+            canvas.height = 900;
+            const ctx = canvas.getContext('2d');
+
+            // 背景色
+            ctx.fillStyle = '#f0f4f8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 標題
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('台大補習班 - 智能選位系統', canvas.width / 2, 50);
+
+            // 生成時間
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#6b7280';
+            ctx.fillText('生成時間：' + new Date().toLocaleString('zh-TW'), canvas.width / 2, 85);
+
+            // 四個區域配置 (上AB, 下CD)
+            const areas = [
+                { name: 'A', color: '#22c55e', x: 50, y: 120 },
+                { name: 'B', color: '#3b82f6', x: 1050, y: 120 },
+                { name: 'C', color: '#f59e0b', x: 50, y: 520 },
+                { name: 'D', color: '#ec4899', x: 1050, y: 520 }
+            ];
+
+            areas.forEach(area => {
+                const areaName = area.name;
+                const areaColor = area.color;
+                const xOffset = area.x;
+                const yOffset = area.y;
+
+                // 區域標題背景
+                ctx.fillStyle = areaColor;
+                ctx.fillRect(xOffset, yOffset, 900, 40);
+
+                // 區域標題文字
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 28px Arial';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(areaName + '區', xOffset + 20, yOffset + 20);
+
+                // 座位參數
+                const seatSize = 36;
+                const spacing = 6;
+                const cols = 5;
+                const rows = 6;
+
+                // 座位容器邊框
+                const containerWidth = cols * (seatSize + spacing) + 20;
+                const containerHeight = rows * (seatSize + spacing) + 20;
+                ctx.strokeStyle = '#d1d5db';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(xOffset + 10, yOffset + 50, containerWidth, containerHeight);
+
+                // 繪製座位
+                for (let i = 0; i < 30; i++) {
+                    const row = Math.floor(i / cols);
+                    const col = i % cols;
+                    
+                    const x = xOffset + 20 + col * (seatSize + spacing);
+                    const y = yOffset + 60 + row * (seatSize + spacing);
+                    
+                    const seatNum = i + 1;
+                    const seatId = `${areaName}-${String(seatNum).padStart(2, '0')}`;
+                    const student = Object.values(appState.selections).find(s => s.seat === seatId);
+
+                    // 座位背景
+                    if (student) {
+                        ctx.fillStyle = areaColor;
+                    } else {
+                        ctx.fillStyle = 'white';
+                    }
+                    ctx.fillRect(x, y, seatSize, seatSize);
+                    
+                    // 座位邊框
+                    ctx.strokeStyle = student ? areaColor : '#d1d5db';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, seatSize, seatSize);
+
+                    // 座位文字
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = student ? 'white' : '#374151';
+                    ctx.font = 'bold 12px Arial';
+                    
+                    if (student) {
+                        // 顯示座位號
+                        ctx.fillText(seatNum, x + seatSize / 2, y + seatSize / 2 - 8);
+                        // 顯示學生名字
+                        ctx.font = '9px Arial';
+                        const name = student.name.length > 3 ? student.name.substring(0, 3) : student.name;
+                        ctx.fillText(name, x + seatSize / 2, y + seatSize / 2 + 8);
+                    } else {
+                        ctx.fillText(seatNum, x + seatSize / 2, y + seatSize / 2);
+                    }
+                }
+            });
+
+            // 下載
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `seating_chart_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert('✅ 座位圖已下載！');
+            }, 'image/png');
+        }
+
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (currentPassword !== appState.adminPassword) {
+                alert('❌ 目前密碼錯誤！');
+                return;
+            }
+
+            if (!newPassword || newPassword.length < 4) {
+                alert('❌ 新密碼至少需要 4 個字符！');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('❌ 兩次輸入的新密碼不一致！');
+                return;
+            }
+
+            appState.adminPassword = newPassword;
+            saveData();
+
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+
+            alert('✅ 密碼修改成功！\n\n新密碼：' + newPassword);
+        }
+
+        let syncTimer = null;
+        function startAutoSync() {
+            if (syncTimer) clearInterval(syncTimer);
+            syncTimer = setInterval(() => {
+                // 檢查當前是否在學生名單頁
+                const activeTab = document.querySelector('.tab-content.active');
+                
+                // 如果在學生名單頁，跳過同步（保護複選框）
+                if (activeTab && activeTab.id === 'studentsTab') {
+                    return;
+                }
+                
+                // 其他頁面正常同步
+                loadData();
+                if (appState.currentPage === 'selection' && appState.currentUser) {
+                    renderSeats();
+                } else if (appState.currentPage === 'admin') {
+                    renderAdminSeats();
+                }
+            }, appState.syncInterval);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderLoginPage();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            saveData();
+        });
+    </script>
+</body>
+</html>
