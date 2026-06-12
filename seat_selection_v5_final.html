@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智能選位系統</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -292,7 +291,17 @@
             <!-- 選位視圖 -->
             <div id="viewTab" class="tab-content">
                 <div class="card">
-                    <h2 style="margin-bottom: 20px;">👁️ 選位視圖（實時監控）</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">👁️ 選位視圖（實時監控）</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn-primary" onclick="toggleAutoRefresh()" id="autoRefreshBtn" style="padding: 10px 15px; font-size: 14px;">⚡ 開啟自動更新</button>
+                            <button type="button" class="btn-secondary" onclick="manualRefresh()" style="padding: 10px 15px; font-size: 14px;">🔄 手動更新</button>
+                        </div>
+                    </div>
+                    
+                    <div id="refreshStatus" style="background: #dbeafe; border: 1px solid #3b82f6; color: #1e40af; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; display: none;">
+                        <span id="refreshStatusText">自動更新已關閉</span>
+                    </div>
                     
                     <div class="blackboard-container" style="margin-bottom: 30px;">
                         <div class="area-section area-a">
@@ -343,34 +352,6 @@
             <div id="settingsTab" class="tab-content">
                 <div class="card">
                     <h2 style="margin-bottom: 30px;">⚙️ 系統設定</h2>
-                    
-                    <!-- 跨設備同步 -->
-                    <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h3 style="color: #1e40af; margin-bottom: 15px;">🔗 生成共享URL（多設備同步）</h3>
-                        <p style="color: #1e40af; margin-bottom: 15px; font-size: 14px;">電腦端生成URL，手機掃QR碼或複製URL，自動同步所有學生資料</p>
-                        <button type="button" class="btn-primary" onclick="generateShareLink()" style="margin-bottom: 15px;">📱 生成共享URL + QR碼</button>
-                        
-                        <div id="shareLinkContainer" style="display: none; background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
-                            <div style="text-align: center;">
-                                <h4 style="margin-bottom: 15px; color: #1f2937;">掃描QR碼或複製URL</h4>
-                                <div id="qrcodeDisplay" style="display: inline-block; padding: 10px; background: white; border-radius: 8px;"></div>
-                            </div>
-                            
-                            <div style="margin-top: 20px;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f2937;">或複製這個URL：</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="shareLinkInput" readonly style="flex: 1; padding: 12px; border: 2px solid #3b82f6; border-radius: 8px; font-family: monospace; font-size: 12px;">
-                                    <button type="button" class="btn-primary" onclick="copyShareLink()" style="width: 120px; padding: 12px;">📋 複製</button>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 15px; background: #fef3c7; border: 2px solid #fde047; border-radius: 8px; padding: 12px; color: #92400e; font-size: 13px;">
-                                <strong>💡 提示：</strong>手機用這個URL打開後，自動載入所有學生資料
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 修改密碼 -->
                     <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px;">
                         <h3 style="color: #166534; margin-bottom: 15px;">🔐 修改老師密碼</h3>
                         <div style="display: grid; gap: 15px;">
@@ -461,65 +442,6 @@
                 selections: appState.selections,
                 adminPassword: appState.adminPassword
             }));
-        }
-
-        function generateShareLink() {
-            const dataToShare = {
-                students: appState.students,
-                timestamp: new Date().toLocaleString('zh-TW')
-            };
-            
-            const jsonString = JSON.stringify(dataToShare);
-            const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
-            
-            const baseUrl = window.location.href.split('?')[0];
-            const shareUrl = `${baseUrl}?share=${encodedData}`;
-            
-            document.getElementById('shareLinkInput').value = shareUrl;
-            document.getElementById('shareLinkContainer').style.display = 'block';
-            
-            document.getElementById('qrcodeDisplay').innerHTML = '';
-            new QRCode(document.getElementById('qrcodeDisplay'), {
-                text: shareUrl,
-                width: 250,
-                height: 250,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-
-        function copyShareLink() {
-            const input = document.getElementById('shareLinkInput');
-            input.select();
-            document.execCommand('copy');
-            alert('✅ URL 已複製到剪貼板！');
-        }
-
-        function loadShareData() {
-            const params = new URLSearchParams(window.location.search);
-            const shareData = params.get('share');
-            
-            if (shareData) {
-                try {
-                    const jsonString = decodeURIComponent(escape(atob(shareData)));
-                    const data = JSON.parse(jsonString);
-                    
-                    if (data.students && Object.keys(data.students).length > 0) {
-                        appState.students = data.students;
-                        saveData();
-                        
-                        const msg = document.getElementById('successMessage');
-                        if (msg) {
-                            msg.textContent = `✓ 成功同步 ${Object.keys(data.students).length} 個學生資料`;
-                            msg.classList.add('active');
-                            setTimeout(() => msg.classList.remove('active'), 3000);
-                        }
-                    }
-                } catch(e) {
-                    console.error('共享資料解碼失敗:', e);
-                }
-            }
         }
 
         function handleLogin(event) {
@@ -761,10 +683,11 @@
                                 }
                             }
                             
-                            seatDiv.innerHTML = `<div style="line-height: 1; font-size: 10px;">${seatNum}</div><div style="line-height: 1; font-size: 10px;">${studentOnSeat.name}</div>`;
-                            seatDiv.style.fontSize = '10px';
+                            // 修改：字體縮小到 14px，讓全名能在同一行
+                            seatDiv.innerHTML = `<div style="line-height: 1; font-size: 12px;">${seatNum}</div><div style="line-height: 1; font-size: 12px;">${studentOnSeat.name}</div>`;
+                            seatDiv.style.fontSize = '12px';
                             seatDiv.style.fontWeight = '700';
-                            seatDiv.style.padding = '1px';
+                            seatDiv.style.padding = '2px';
                             seatDiv.style.display = 'flex';
                             seatDiv.style.flexDirection = 'column';
                             seatDiv.style.alignItems = 'center';
@@ -979,18 +902,22 @@
             canvas.height = 900;
             const ctx = canvas.getContext('2d');
 
+            // 背景色
             ctx.fillStyle = '#f0f4f8';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // 標題
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 40px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('台大補習班 - 智能選位系統', canvas.width / 2, 50);
 
+            // 生成時間
             ctx.font = '16px Arial';
             ctx.fillStyle = '#6b7280';
             ctx.fillText('生成時間：' + new Date().toLocaleString('zh-TW'), canvas.width / 2, 85);
 
+            // 四個區域配置 (上AB, 下CD)
             const areas = [
                 { name: 'A', color: '#22c55e', x: 50, y: 120 },
                 { name: 'B', color: '#3b82f6', x: 1050, y: 120 },
@@ -1004,26 +931,31 @@
                 const xOffset = area.x;
                 const yOffset = area.y;
 
+                // 區域標題背景
                 ctx.fillStyle = areaColor;
                 ctx.fillRect(xOffset, yOffset, 900, 40);
 
+                // 區域標題文字
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 28px Arial';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(areaName + '區', xOffset + 20, yOffset + 20);
 
+                // 座位參數
                 const seatSize = 36;
                 const spacing = 6;
                 const cols = 5;
                 const rows = 6;
 
+                // 座位容器邊框
                 const containerWidth = cols * (seatSize + spacing) + 20;
                 const containerHeight = rows * (seatSize + spacing) + 20;
                 ctx.strokeStyle = '#d1d5db';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(xOffset + 10, yOffset + 50, containerWidth, containerHeight);
 
+                // 繪製座位
                 for (let i = 0; i < 30; i++) {
                     const row = Math.floor(i / cols);
                     const col = i % cols;
@@ -1035,6 +967,7 @@
                     const seatId = `${areaName}-${String(seatNum).padStart(2, '0')}`;
                     const student = Object.values(appState.selections).find(s => s.seat === seatId);
 
+                    // 座位背景
                     if (student) {
                         ctx.fillStyle = areaColor;
                     } else {
@@ -1042,17 +975,21 @@
                     }
                     ctx.fillRect(x, y, seatSize, seatSize);
                     
+                    // 座位邊框
                     ctx.strokeStyle = student ? areaColor : '#d1d5db';
                     ctx.lineWidth = 2;
                     ctx.strokeRect(x, y, seatSize, seatSize);
 
+                    // 座位文字
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = student ? 'white' : '#374151';
                     ctx.font = 'bold 12px Arial';
                     
                     if (student) {
+                        // 顯示座位號
                         ctx.fillText(seatNum, x + seatSize / 2, y + seatSize / 2 - 8);
+                        // 顯示學生名字
                         ctx.font = '9px Arial';
                         const name = student.name.length > 3 ? student.name.substring(0, 3) : student.name;
                         ctx.fillText(name, x + seatSize / 2, y + seatSize / 2 + 8);
@@ -1062,6 +999,7 @@
                 }
             });
 
+            // 下載
             canvas.toBlob(blob => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1106,15 +1044,21 @@
         }
 
         let syncTimer = null;
+        let autoRefreshTimer = null;
+        let isAutoRefreshEnabled = false;
+
         function startAutoSync() {
             if (syncTimer) clearInterval(syncTimer);
             syncTimer = setInterval(() => {
+                // 檢查當前是否在學生名單頁
                 const activeTab = document.querySelector('.tab-content.active');
                 
+                // 如果在學生名單頁，跳過同步（保護複選框）
                 if (activeTab && activeTab.id === 'studentsTab') {
                     return;
                 }
                 
+                // 其他頁面正常同步
                 loadData();
                 if (appState.currentPage === 'selection' && appState.currentUser) {
                     renderSeats();
@@ -1124,9 +1068,59 @@
             }, appState.syncInterval);
         }
 
+        function manualRefresh() {
+            loadData();
+            renderAdminSeats();
+            const status = document.getElementById('refreshStatus');
+            status.style.display = 'block';
+            const statusText = document.getElementById('refreshStatusText');
+            statusText.textContent = '✓ 已更新於 ' + new Date().toLocaleTimeString('zh-TW');
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            const status = document.getElementById('refreshStatus');
+            const statusText = document.getElementById('refreshStatusText');
+            
+            if (isAutoRefreshEnabled) {
+                // 關閉自動更新
+                isAutoRefreshEnabled = false;
+                if (autoRefreshTimer) {
+                    clearInterval(autoRefreshTimer);
+                    autoRefreshTimer = null;
+                }
+                btn.textContent = '⚡ 開啟自動更新';
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-primary');
+                status.style.display = 'block';
+                statusText.textContent = '自動更新已關閉';
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 2000);
+            } else {
+                // 開啟自動更新
+                isAutoRefreshEnabled = true;
+                btn.textContent = '⏸️ 關閉自動更新';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-danger');
+                status.style.display = 'block';
+                statusText.textContent = '自動更新已開啟（每 2 秒更新一次）';
+                
+                // 每2秒自動更新一次
+                autoRefreshTimer = setInterval(() => {
+                    loadData();
+                    renderAdminSeats();
+                    const now = new Date().toLocaleTimeString('zh-TW');
+                    statusText.textContent = '自動更新中... 最後更新：' + now;
+                }, 2000);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
-            loadShareData();
             renderLoginPage();
         });
 
