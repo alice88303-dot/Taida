@@ -375,10 +375,13 @@
           measurementId: "G-G4NYMBQKDZ"
         };
 
+        // 全局變數
+        let db = null;
+
         // 初始化 Firebase
         try {
           firebase.initializeApp(firebaseConfig);
-          const db = firebase.firestore();
+          db = firebase.firestore();
           console.log('✓ Firebase 已成功初始化');
         } catch(error) {
           console.error('❌ Firebase 初始化失敗:', error);
